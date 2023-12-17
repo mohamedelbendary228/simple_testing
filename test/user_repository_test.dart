@@ -23,10 +23,9 @@ void main() {
         given userRepository class when getUer function is called 
         and status code is 200 then a userModel should be returned
         """,
-            () async {
+        () async {
           // Arrange
-          when(() =>
-              mockHttpClient.get(
+          when(() => mockHttpClient.get(
                   Uri.parse('https://jsonplaceholder.typicode.com/users/1')))
               .thenAnswer((invocation) async {
             return Response("""
@@ -51,20 +50,25 @@ void main() {
           given userRepository class when getUer function is called
           and status code is not 200 then an exception should be thrown
           """,
-            () async {
+        () async {
           // Arrange
           when(() {
-            mockHttpClient.get(
-                Uri.parse('https://jsonplaceholder.typicode.com/users/1'));
-          }).thenAnswer((invocation) {
-            
-          });
-          // Act
+            return mockHttpClient
+                .get(Uri.parse('https://jsonplaceholder.typicode.com/users/1'));
+          }).thenAnswer(
+            (invocation) async {
+              return Response("{}", 500);
+            },
+          );
 
+          // Act
+          final user = userRepository.getUser();
           // Assert
+          expect(user, throwsException);
         },
       );
     });
+
+
   });
-});
 }
